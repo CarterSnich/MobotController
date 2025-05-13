@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:toast/toast.dart';
 
 class Controller extends StatefulWidget {
   const Controller({
@@ -155,18 +156,20 @@ class _Controller extends State<Controller> {
                                   sendUDP("BR0", widget.ipAddress, widget.port),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
+                                  horizontal: 24,
+                                  vertical: 16,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.blue,
-                                  border: Border.all(color: Colors.white),
+                                  border: Border.all(color: Colors.blue),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: const Text(
                                   "Brake",
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: 16.0),
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  ),
                                 ),
                               ),
                             )
@@ -188,11 +191,6 @@ class _Controller extends State<Controller> {
                   children: [
                     OutlinedButton(
                       style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 16.0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
                         foregroundColor: Colors.white,
                         backgroundColor: carState == CarState.park
                             ? Colors.blue
@@ -238,11 +236,14 @@ class _Controller extends State<Controller> {
                         widget.ipAddress,
                         widget.port,
                       ),
-                      onTapUp: (_) => sendUDP(
-                        "HO0",
-                        widget.ipAddress,
-                        widget.port,
-                      ),
+                      onTapUp: (_) {
+                        sendUDP(
+                          "HO0",
+                          widget.ipAddress,
+                          widget.port,
+                        );
+                        Toast.show("asdasd", duration: Toast.lengthShort);
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -255,7 +256,10 @@ class _Controller extends State<Controller> {
                         ),
                         child: const Text(
                           "Horn",
-                          style: TextStyle(color: Colors.white, fontSize: 16.0),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          ),
                         ),
                       ),
                     ),

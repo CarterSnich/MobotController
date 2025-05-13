@@ -6,8 +6,7 @@ import 'package:toast/toast.dart';
 import 'controller.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePage();
@@ -53,13 +52,32 @@ class _HomePage extends State<HomePage> {
 
   Future<void> getPrefs() async {
     prefs = await SharedPreferences.getInstance();
-    prefs.setString("ipAddress", "192.168.0.1");
+    restorePrefs();
+  }
+
+  void restorePrefs() {
+    setState(() {
+      ipAddressController.text = prefs.getString("ipAddress") ?? "192.168.4.1";
+      portController.text = prefs.getString("port") ?? "5003";
+      maxSteeringLeftController.text =
+          prefs.getString("maxSteeringLeft") ?? "255";
+      steeringCenterController.text =
+          prefs.getString("steeringCenter") ?? "128";
+      maxSteeringRightController.text =
+          prefs.getString("maxSteeringRight") ?? "0";
+      maxForwardSpeedController.text =
+          prefs.getString("maxForwardSpeed") ?? "255";
+      minForwardSpeedController.text =
+          prefs.getString("minForwardSpeed") ?? "0";
+      maxReverseSpeedController.text =
+          prefs.getString("maxReverseSpeed") ?? "255";
+      minReverseSpeedController.text =
+          prefs.getString("minReverseSpeed") ?? "0";
+    });
   }
 
   void onClickContinue() async {
-    final String ipAddress = ipAddressController.text;
-
-    if (!isValidIPv4(ipAddress)) {
+    if (!isValidIPv4(ipAddressController.text)) {
       Toast.show(
         "Invalid IP address",
         duration: Toast.lengthShort,
@@ -78,6 +96,7 @@ class _HomePage extends State<HomePage> {
     }
 
     try {
+      final String ipAddress = ipAddressController.text;
       final int port = int.parse(portController.text);
       final int maxSteeringLeft = int.parse(maxSteeringLeftController.text);
       final int steeringCenter = int.parse(steeringCenterController.text);
@@ -122,40 +141,19 @@ class _HomePage extends State<HomePage> {
     }
   }
 
-  void onClickRestore() {
-    setState(() {
-      ipAddressController.text = prefs.getString("ipAddress") ?? "192.168.4.1";
-      portController.text = prefs.getString("port") ?? "5003";
-      maxSteeringLeftController.text =
-          prefs.getString("maxSteeringLeft") ?? "255";
-      steeringCenterController.text =
-          prefs.getString("steeringCenter") ?? "128";
-      maxSteeringRightController.text =
-          prefs.getString("maxSteeringRight") ?? "0";
-      maxForwardSpeedController.text =
-          prefs.getString("maxForwardSpeed") ?? "255";
-      minForwardSpeedController.text =
-          prefs.getString("minForwardSpeed") ?? "0";
-      maxReverseSpeedController.text =
-          prefs.getString("maxReverseSpeed") ?? "255";
-      minReverseSpeedController.text =
-          prefs.getString("minReverseSpeed") ?? "0";
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text("MobotController"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Center(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
                 padding: paddingValue,
@@ -242,13 +240,13 @@ class _HomePage extends State<HomePage> {
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  label("Reverse Speed"),
-                  Expanded(
-                    child: Padding(
-                      padding: paddingValue,
+              Padding(
+                padding: paddingValue,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    label("Reverse Speed"),
+                    Expanded(
                       child: Row(
                         children: [
                           Expanded(
@@ -265,17 +263,16 @@ class _HomePage extends State<HomePage> {
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: paddingValue,
+              Padding(
+                padding: paddingValue,
+                child: Row(
+                  children: [
+                    Expanded(
                       child: OutlinedButton(
                         style: TextButton.styleFrom(
-                          textStyle: const TextStyle(fontSize: 16.0),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 20,
@@ -287,30 +284,9 @@ class _HomePage extends State<HomePage> {
                         child: const Text('Continue'),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: paddingValue,
-                      child: OutlinedButton(
-                        style: TextButton.styleFrom(
-                          textStyle: const TextStyle(fontSize: 16.0),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 20,
-                          ),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue,
-                        ),
-                        onPressed: onClickRestore,
-                        child: const Text('Restore'),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -338,10 +314,7 @@ bool isValidIPv4(String input) {
 SizedBox label(String text) {
   return SizedBox(
     width: 120,
-    child: Text(
-      text,
-      style: const TextStyle(fontSize: 16),
-    ),
+    child: Text(text),
   );
 }
 
@@ -357,7 +330,6 @@ TextFormField buildTextField({
       labelText: label,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
-        vertical: 4,
       ),
       border: const OutlineInputBorder(),
     ),
