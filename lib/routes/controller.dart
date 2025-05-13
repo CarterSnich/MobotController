@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:toast/toast.dart';
+import 'package:mobot_controller/components/button.dart';
 
 class Controller extends StatefulWidget {
   const Controller({
@@ -77,11 +77,6 @@ class _Controller extends State<Controller> {
         minSliderValue = widget.minReverseSpeed.toDouble();
       }
     });
-    sendUDP(
-      'CS${state.index}',
-      widget.ipAddress,
-      widget.port,
-    );
   }
 
   @override
@@ -149,30 +144,19 @@ class _Controller extends State<Controller> {
                                 ),
                               ),
                             ),
-                            GestureDetector(
-                              onTapDown: (_) =>
-                                  sendUDP("BR1", widget.ipAddress, widget.port),
-                              onTapUp: (_) =>
-                                  sendUDP("BR0", widget.ipAddress, widget.port),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  border: Border.all(color: Colors.blue),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Text(
-                                  "Brake",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                  ),
-                                ),
+                            CustomButton(
+                              label: "Brakes",
+                              onTapDown: (_) => sendUDP(
+                                "BR1",
+                                widget.ipAddress,
+                                widget.port,
                               ),
-                            )
+                              onTapUp: (_) => sendUDP(
+                                "BR0",
+                                widget.ipAddress,
+                                widget.port,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -182,100 +166,56 @@ class _Controller extends State<Controller> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                  vertical: 4,
+                  vertical: 8,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    OutlinedButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: carState == CarState.park
-                            ? Colors.blue
-                            : Colors.grey,
-                      ),
-                      onPressed: () => prdPress(CarState.park),
-                      child: const Text('Park'),
+                    CustomButton(
+                      label: "Park",
+                      onTap: () => prdPress(CarState.park),
+                      color:
+                          carState == CarState.park ? Colors.blue : Colors.grey,
                     ),
-                    OutlinedButton(
-                      style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 16.0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        foregroundColor: Colors.white,
-                        backgroundColor: carState == CarState.drive
-                            ? Colors.blue
-                            : Colors.grey,
-                      ),
-                      onPressed: () => prdPress(CarState.drive),
-                      child: const Text('Drive'),
+                    const SizedBox(
+                      height: 8,
                     ),
-                    OutlinedButton(
-                      style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 16.0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        foregroundColor: Colors.white,
-                        backgroundColor: carState == CarState.reverse
-                            ? Colors.blue
-                            : Colors.grey,
-                      ),
-                      onPressed: () => prdPress(CarState.reverse),
-                      child: const Text('Reverse'),
+                    CustomButton(
+                      label: "Drive",
+                      onTap: () => prdPress(CarState.drive),
+                      color: carState == CarState.drive
+                          ? Colors.blue
+                          : Colors.grey,
                     ),
-                    const SizedBox(height: 16),
-                    GestureDetector(
+                    const SizedBox(height: 8),
+                    CustomButton(
+                      label: "Reverse",
+                      onTap: () => prdPress(CarState.reverse),
+                      color: carState == CarState.reverse
+                          ? Colors.blue
+                          : Colors.grey,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    CustomButton(
+                      label: "Horn",
                       onTapDown: (_) => sendUDP(
                         "HO1",
                         widget.ipAddress,
                         widget.port,
                       ),
-                      onTapUp: (_) {
-                        sendUDP(
-                          "HO0",
-                          widget.ipAddress,
-                          widget.port,
-                        );
-                        Toast.show("asdasd", duration: Toast.lengthShort);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          "Horn",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                          ),
-                        ),
+                      onTapUp: (_) => sendUDP(
+                        "HO0",
+                        widget.ipAddress,
+                        widget.port,
                       ),
                     ),
-                    OutlinedButton(
-                      style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 16.0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.blue,
-                      ),
-                      onPressed: () =>
-                          sendUDP("HL", widget.ipAddress, widget.port),
-                      child: const Text('Headlights'),
+                    const SizedBox(height: 8),
+                    CustomButton(
+                      label: "Headlights",
+                      onTap: () => sendUDP("HL", widget.ipAddress, widget.port),
                     ),
                   ],
                 ),
